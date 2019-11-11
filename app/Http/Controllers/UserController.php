@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+//Helper que contiene la logica del JWT
+use App\Helpers\JwtAuth;
+
+use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Support\Facades\DB;
@@ -40,11 +44,11 @@ class UserController extends Controller
             $user->password = $pwd;
 
             //Comprobar usuario duplicado
-            $isset_user = User::where('email', '=',  $email)->first(); //veifricamos si ya exite el email
+            $isset_user = User::where('email', '=', $email)->first(); //veifricamos si ya exite el email
 
             //Crear el usuario
 
-            if($isset_user == null){
+            if ($isset_user == null) {
 
                 $user->save();
                 $data = [
@@ -53,7 +57,7 @@ class UserController extends Controller
                     'message' => 'Usuario creado correctamente'
                 ];
 
-            }else{
+            } else {
                 //No lo guarda por que ya exite el mauil
 
                 $data = [
@@ -74,12 +78,42 @@ class UserController extends Controller
         return response()->json($data, $data['code']);
 
 
-
     }
 
     public function login(Request $request)
     {
-        echo "Loginnn Ok";
-        die();
+        $jwt = new JwtAuth();
+
+        //Recibir datos por post
+
+        //Capturamos los datos que nos llega
+        $json = $request->input('json', null);
+        //decodificamos el objeto obtenido a array
+        $params = json_decode($json);
+
+        $email = (!is_null($json) && isset($params->email)) ? $params->email : null;
+        $password = (!is_null($json) && isset($params->password)) ? $params->password : null;
+        $getToken = (!is_null($json) && isset($params->gettoken)) ? $params->gettoken : true;
+
+        //Cifrar la contraseña que nos llega
+        $password = hash('sha256', $password);
+
+        //Si se enviaron los datos
+        if (!is_null($email) && !is_null($password) && ($getToken == null || $getToken == 'false')) {
+            $singup = $jwt->signup($email, $password);
+
+            return response()->json($singup, 200);
+        } elseif ($getToken != null) {
+            $singup = $jwt->signup($email, $password, $getToken);
+            return response()->json($singup, 200);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Envia tus datos por post'
+            ], 400);
+        }
+
+
+
     }
 }
