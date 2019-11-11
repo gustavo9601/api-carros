@@ -11,13 +11,26 @@ class CarController extends Controller
     public function index(Request $request)
     {
 
-        //Validacion el request contenga el Authorization
-        if ($this->verificarPeticion($request)) {
+        //con el load('modelo') dependiendo de la relacion
+        //traera la informacion del usuario con el id en la cabla cars
+        $cars = Car::all()->load('user');
 
-        } else {
+        return response()->json([
+            'status' => 'success',
+            'cars' => $cars
+        ], 200);
 
-        }
+    }
 
+
+    //Mostrar por id el detalle
+    public function show($id)
+    {
+        $car = Car::find($id)->load('user');
+        return response()->json([
+            'status' => 'success',
+            'car' => $car
+        ], 200);
     }
 
     //Guardar
@@ -69,7 +82,7 @@ class CarController extends Controller
 
             //Al validator::make le pasamos un arreglo normal y las reglas que concuerden con los indices
             $validacionData = \Validator::make($params_array, $rules);
-            if($validacionData->fails()){
+            if ($validacionData->fails()) {
                 return response()->json([
                     'status' => 'error',
                     'errors' => $validacionData->errors()
@@ -102,6 +115,93 @@ class CarController extends Controller
 
         return response()->json($result);
     }
+
+
+    //Actualizar carro
+    public function update($id, Request $request)
+    {
+
+
+        $validateRequest = $this->verificarPeticion($request);
+        if ($validateRequest) {
+
+            //Recoger parametros post
+            $json = $request->input('json', null);
+            $params = json_decode($json);
+            $params_array = json_decode($json, true);
+
+            //Validar datos
+            $rules = [
+                'title' => 'required',
+                'description' => 'required',
+                'price' => 'required',
+                'status' => 'required'
+            ];
+
+            //Al validator::make le pasamos un arreglo normal y las reglas que concuerden con los indices
+            $validacionData = \Validator::make($params_array, $rules);
+            if ($validacionData->fails()) {
+                return response()->json([
+                    'status' => 'error',
+                    'errors' => $validacionData->errors()
+                ], 400);
+            }
+
+            //Actualizar registro
+            //Busca por id y actualizamos de una vez
+            //le pasamos un arreglo normal con el mismo nombre de los indices a los atributos en la tabla
+            $car = Car::where('id', $id)->update($params_array);
+
+            $result = [
+                'car' => $params,
+                'status' => 'success',
+                'code' => 200,
+                'message' => 'Se actualizo correctamente'
+            ];
+
+        } else {
+            $result = [
+                'status' => 'error',
+                'code' => 400,
+                'message' => 'Login Incorrecto'
+            ];
+        }
+
+        return response()->json($result);
+
+    }
+
+    //Eliminar carro
+    public function destroy($id, Request $request)
+    {
+
+        $validateRequest = $this->verificarPeticion($request);
+        if ($validateRequest) {
+            //Comprobar el registro
+            $car = Car::find($id);
+
+            //Borrarlos
+            $car->delete();
+
+            //Devolverlo
+            $data = [
+                'car' => $car,
+                'status' => 'success',
+                'code' => 200,
+                'message' => 'Carro eliminado correctamente'
+            ];
+
+        } else {
+            $data = [
+                'status' => 'error',
+                'message' => 'login incorrecto !!!',
+                'code' => 400
+            ];
+        }
+
+        return response()->json($data, $data['code']);
+    }
+
 
     public function verificarPeticion(Request $request)
     {
