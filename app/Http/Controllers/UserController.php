@@ -23,6 +23,7 @@ class UserController extends Controller
         //Convertimos la respuesta de json a un array
         $params = json_decode($json);
 
+
         $email = (!is_null($json) && isset($params->email)) ? $params->email : null;
         $name = (!is_null($json) && isset($params->name)) ? $params->name : null;
         $surname = (!is_null($json) && isset($params->surname)) ? $params->surname : null;
@@ -52,7 +53,7 @@ class UserController extends Controller
 
                 $user->save();
                 $data = [
-                    'status' => 'succes',
+                    'status' => 'success',
                     'code' => 200,
                     'message' => 'Usuario creado correctamente'
                 ];
@@ -62,7 +63,7 @@ class UserController extends Controller
 
                 $data = [
                     'status' => 'error',
-                    'code' => 400,
+                    'code' => 200,
                     'message' => 'Usuario duplicado'
                 ];
             }
@@ -70,7 +71,7 @@ class UserController extends Controller
         } else {
             $data = [
                 'status' => 'error',
-                'code' => 400,
+                'code' => 200,
                 'message' => 'Usuario no creado'
             ];
         }
@@ -110,7 +111,7 @@ class UserController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Envia tus datos por post'
-            ], 400);
+            ], 200);
         }
 
 

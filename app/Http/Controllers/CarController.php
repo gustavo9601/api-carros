@@ -86,7 +86,7 @@ class CarController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'errors' => $validacionData->errors()
-                ], 400);
+                ], 200);
             }
 
 
@@ -108,7 +108,7 @@ class CarController extends Controller
         } else {
             $result = [
                 'status' => 'error',
-                'code' => 400,
+                'code' => 200,
                 'message' => 'Login Incorrecto'
             ];
         }
@@ -144,7 +144,7 @@ class CarController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'errors' => $validacionData->errors()
-                ], 400);
+                ], 200);
             }
 
             //Actualizar registro
@@ -162,7 +162,7 @@ class CarController extends Controller
         } else {
             $result = [
                 'status' => 'error',
-                'code' => 400,
+                'code' => 200,
                 'message' => 'Login Incorrecto'
             ];
         }
@@ -195,7 +195,7 @@ class CarController extends Controller
             $data = [
                 'status' => 'error',
                 'message' => 'login incorrecto !!!',
-                'code' => 400
+                'code' => 200
             ];
         }
 

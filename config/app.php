@@ -174,9 +174,13 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        App\Providers\JwtAuthServiceProvider::class  //Registramos el provider que contine la clase JwtAuth
+        App\Providers\JwtAuthServiceProvider::class,  //Registramos el provider que contine la clase JwtAuth
 
+
+        /*Allow Cors*/
+        Barryvdh\Cors\ServiceProvider::class,
     ],
+
 
     /*
     |--------------------------------------------------------------------------
