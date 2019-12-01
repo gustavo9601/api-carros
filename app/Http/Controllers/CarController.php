@@ -139,6 +139,13 @@ class CarController extends Controller
             $params = json_decode($json);
             $params_array = json_decode($json, true);
 
+
+            //Desde el front estamos enviando el user y el id lo debemos quitar desde el back
+            unset($params_array['id']);
+            unset($params_array['user_id']);
+            unset($params_array['created_at']);
+            unset($params_array['user']);
+
             //Validar datos
             $rules = [
                 'title' => 'required',
